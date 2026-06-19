@@ -154,6 +154,11 @@ const Sidebar = () => {
             <LogOut size={16} />
             <span className="text-sm">Sign Out</span>
           </motion.button>
+
+          {/* Credit */}
+          <p className="text-center text-text-muted text-[10px] pt-1">
+            v1.0 · by <span className="text-brand-violet font-medium">Syahrullian</span>
+          </p>
         </div>
       </motion.aside>
     </>

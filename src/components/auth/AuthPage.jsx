@@ -303,6 +303,9 @@ const AuthPage = () => {
         <p className="text-center text-text-muted text-xs mt-6">
           Data kamu aman & terenkripsi 🔒
         </p>
+        <p className="text-center text-text-muted text-[11px] mt-2">
+          Crafted by <span className="text-brand-violet font-medium">Syahrullian</span>
+        </p>
       </motion.div>
     </div>
   )
