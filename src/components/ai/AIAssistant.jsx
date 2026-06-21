@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useRef, useEffect } from 'react'
 import { Send, Bot, Sparkles, Loader2, RotateCcw, User } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
-import { formatIDR, getCategoryInfo } from '../../utils/formatters'
+import { formatIDR, getDisplayLabel } from '../../utils/formatters'
 
 const QUICK_PROMPTS = [
   { label: '💸 Pengeluaran terbesar', prompt: 'Apa pengeluaran terbesar saya bulan ini?' },
@@ -22,17 +22,18 @@ const buildContext = (data) => {
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
   })
 
-  // Expense by category
+  // Expense by category (custom category names used as their own group when present)
   const expByCategory = {}
   thisMonth.filter(t => t.type === 'expense').forEach(t => {
-    expByCategory[t.category] = (expByCategory[t.category] || 0) + Number(t.amount)
+    const label = getDisplayLabel(t)
+    expByCategory[label] = (expByCategory[label] || 0) + Number(t.amount)
   })
 
   // Top expenses
   const topExpenses = Object.entries(expByCategory)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
-    .map(([cat, amt]) => `- ${getCategoryInfo(cat, 'expense').label}: ${formatIDR(amt)}`)
+    .map(([label, amt]) => `- ${label}: ${formatIDR(amt)}`)
     .join('\n')
 
   // Investments summary
@@ -179,7 +180,7 @@ const AIAssistant = () => {
       {/* Header */}
       <motion.div
         className="glass-card p-4 rounded-2xl mb-4 flex items-center justify-between"
-        style={{ background: 'linear-gradient(135deg, rgba(255,77,109,0.08), rgba(17,19,24,0.98))' }}
+        style={{ background: 'linear-gradient(135deg, rgba(255,77,109,0.08), var(--bg-card))' }}
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
@@ -192,14 +193,14 @@ const AIAssistant = () => {
             <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-brand-teal border-2 border-bg-primary" />
           </div>
           <div>
-            <p className="font-display font-semibold text-white text-sm">WealthOS AI</p>
+            <p className="font-display font-semibold text-text-primary text-sm">WealthOS AI</p>
             <p className="text-text-secondary text-xs flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-teal inline-block" />
               Powered by Claude · Terhubung ke data keuanganmu
             </p>
           </div>
         </div>
-        <button className="btn-glass p-2 rounded-xl text-text-secondary hover:text-white"
+        <button className="btn-glass p-2 rounded-xl text-text-secondary hover:text-text-primary"
           onClick={resetChat} title="Reset chat">
           <RotateCcw size={15} />
         </button>
@@ -249,7 +250,6 @@ const AIAssistant = () => {
               {/* Bubble */}
               <div className={`ai-message ${msg.role}`}
                 dangerouslySetInnerHTML={{ __html: renderContent(msg.content) }}
-                style={{ color: msg.role === 'assistant' ? '#e2e8f0' : '#ffffff' }}
               />
             </motion.div>
           ))}
@@ -282,14 +282,14 @@ const AIAssistant = () => {
       {/* Input area */}
       <motion.div
         className="glass-card p-3 rounded-2xl mt-2"
-        style={{ background: 'rgba(17,19,24,0.98)' }}
+        style={{ background: 'var(--bg-card)' }}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="flex gap-3 items-end">
           <textarea
             ref={inputRef}
-            className="flex-1 bg-transparent text-white text-sm resize-none outline-none placeholder-text-muted"
+            className="flex-1 bg-transparent text-text-primary text-sm resize-none outline-none placeholder-text-muted"
             placeholder="Tanya sesuatu tentang keuanganmu..."
             rows={1}
             value={input}
@@ -311,14 +311,14 @@ const AIAssistant = () => {
             style={{
               background: input.trim() && !loading
                 ? 'linear-gradient(135deg, #6C63FF, #4B44CC)'
-                : 'rgba(255,255,255,0.06)',
+                : 'var(--surface-3)',
             }}
             onClick={() => sendMessage()}
             disabled={!input.trim() || loading}
             whileTap={{ scale: 0.9 }}
           >
             {loading
-              ? <Loader2 size={16} className="text-white animate-spin" />
+              ? <Loader2 size={16} className="text-text-primary animate-spin" />
               : <Send size={16} className={input.trim() ? 'text-white' : 'text-text-muted'} />}
           </motion.button>
         </div>

@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { AppProvider, useApp } from './contexts/AppContext'
+import { ThemeProvider } from './contexts/ThemeContext'
 
 import Sidebar from './components/layout/Sidebar'
 import Header from './components/layout/Header'
@@ -33,10 +34,10 @@ const PageContent = () => {
     <AnimatePresence mode="wait">
       <motion.div
         key={activePage}
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -8 }}
-        transition={{ duration: 0.25, ease: 'easeInOut' }}
+        exit={{ opacity: 0, y: -6 }}
+        transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
       >
         {pages[activePage] || pages.dashboard}
       </motion.div>
@@ -120,9 +121,11 @@ const AuthGate = () => {
 // Root App
 const App = () => {
   return (
-    <AuthProvider>
-      <AuthGate />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AuthGate />
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
 

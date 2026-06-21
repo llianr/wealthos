@@ -4,6 +4,7 @@ import { useApp } from '../../contexts/AppContext'
 import { useAuth } from '../../contexts/AuthContext'
 import { getDailyQuote } from '../../utils/quotes'
 import { useState } from 'react'
+import ThemeToggle from './ThemeToggle'
 
 const pageTitle = {
   dashboard: { title: 'Dashboard', subtitle: 'Overview keuangan hari ini' },
@@ -33,7 +34,7 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-20 px-4 lg:px-6 py-4" style={{
-      background: 'linear-gradient(180deg, rgba(10,11,15,0.98) 0%, rgba(10,11,15,0) 100%)',
+      background: 'linear-gradient(180deg, var(--bg-primary) 0%, transparent 100%)',
       backdropFilter: 'blur(20px)',
     }}>
       <div className="flex items-center justify-between">
@@ -49,7 +50,7 @@ const Header = () => {
           <div>
             <motion.h2
               key={activePage}
-              className="font-display text-lg font-bold text-white leading-none"
+              className="font-display text-lg font-bold text-text-primary leading-none"
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -79,7 +80,7 @@ const Header = () => {
               {showQuote && (
                 <motion.div
                   className="absolute right-0 top-full mt-2 glass-card p-4 rounded-2xl w-72 z-50"
-                  style={{ background: 'rgba(17,19,24,0.98)' }}
+                  style={{ background: 'var(--bg-card)' }}
                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -90,20 +91,23 @@ const Header = () => {
                       <Sparkles size={14} className="text-brand-gold" />
                     </div>
                     <div>
-                      <p className="text-sm text-white font-medium leading-relaxed italic">
+                      <p className="text-sm text-text-primary font-medium leading-relaxed italic">
                         "{quote.quote}"
                       </p>
                       <p className="text-text-secondary text-xs mt-2">— {quote.author}</p>
                     </div>
                   </div>
                   <button
-                    className="absolute top-2 right-2 text-text-muted hover:text-white p-1"
+                    className="absolute top-2 right-2 text-text-muted hover:text-text-primary p-1"
                     onClick={() => setShowQuote(false)}
                   >✕</button>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
+
+          {/* Theme toggle */}
+          <ThemeToggle />
 
           {/* Refresh */}
           <motion.button
@@ -122,12 +126,12 @@ const Header = () => {
 
           {/* Date badge */}
           <div className="hidden lg:flex items-center gap-2 px-3 py-2 rounded-xl" style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.06)',
+            background: 'var(--surface-2)',
+            border: '1px solid var(--glass-border)',
           }}>
             <div className="status-dot online" />
             <div className="text-right">
-              <p className="text-white text-xs font-mono font-medium">{timeStr}</p>
+              <p className="text-text-primary text-xs font-mono font-medium">{timeStr}</p>
               <p className="text-text-muted text-[10px]">{dateStr}</p>
             </div>
           </div>
@@ -148,7 +152,7 @@ const Header = () => {
         >
           <span className="text-xl">👋</span>
           <div>
-            <p className="text-white text-sm font-medium">
+            <p className="text-text-primary text-sm font-medium">
               {greeting}, <span className="text-gradient-violet font-semibold">{displayName}</span>!
             </p>
             <p className="text-text-secondary text-xs">

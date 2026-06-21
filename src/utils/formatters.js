@@ -134,6 +134,24 @@ export const getCategoryInfo = (value, type = 'income') => {
   return categories.find(c => c.value === value) || { label: capitalize(value), emoji: '📌' }
 }
 
+// Resolve the label to actually display for a transaction.
+// If the user picked "Lainnya" and typed a custom name, that name wins —
+// otherwise falls back to the standard category label.
+export const getDisplayLabel = (tx) => {
+  if (tx?.custom_category && tx.custom_category.trim()) return tx.custom_category.trim()
+  return getCategoryInfo(tx?.category, tx?.type).label
+}
+
+// Same idea but returns the emoji too (custom categories keep the "Lainnya" emoji)
+export const getDisplayCategory = (tx) => {
+  const info = getCategoryInfo(tx?.category, tx?.type)
+  const hasCustom = tx?.custom_category && tx.custom_category.trim()
+  return {
+    emoji: info.emoji,
+    label: hasCustom ? tx.custom_category.trim() : info.label,
+  }
+}
+
 export const getAssetInfo = (value) => {
   return ASSET_TYPES.find(a => a.value === value) || { label: capitalize(value), emoji: '💎' }
 }

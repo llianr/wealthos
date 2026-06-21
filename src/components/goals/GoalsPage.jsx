@@ -31,6 +31,7 @@ const GoalForm = ({ onClose, editData = null }) => {
       ...form,
       target_amount: Number(form.target_amount),
       current_amount: Number(form.current_amount),
+      deadline: form.deadline || null, // Postgres DATE column rejects '' — must be null when empty
     }
     const ok = editData ? await updateGoal(editData.id, data) : await addGoal(data)
     setLoading(false)
@@ -41,13 +42,13 @@ const GoalForm = ({ onClose, editData = null }) => {
     <div className="modal-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
       <motion.div
         className="modal-content p-6"
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.96, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        transition={{ type: 'spring', damping: 20 }}
+        exit={{ opacity: 0, scale: 0.96, y: 16 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 26 }}
       >
         <div className="flex items-center justify-between mb-6">
-          <h3 className="font-display text-xl font-bold text-white">
+          <h3 className="font-display text-xl font-bold text-text-primary">
             {editData ? '✏️ Edit Target' : '🎯 Buat Target Baru'}
           </h3>
           <button className="btn-glass p-2 rounded-xl" onClick={onClose}><X size={18} /></button>
@@ -63,8 +64,8 @@ const GoalForm = ({ onClose, editData = null }) => {
                   key={em} type="button"
                   className="w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all"
                   style={{
-                    background: form.emoji === em ? 'rgba(108,99,255,0.25)' : 'rgba(255,255,255,0.04)',
-                    border: form.emoji === em ? '1px solid rgba(108,99,255,0.5)' : '1px solid rgba(255,255,255,0.06)',
+                    background: form.emoji === em ? 'rgba(108,99,255,0.25)' : 'var(--surface-2)',
+                    border: form.emoji === em ? '1px solid rgba(108,99,255,0.5)' : '1px solid var(--surface-3)',
                     transform: form.emoji === em ? 'scale(1.15)' : 'scale(1)',
                   }}
                   onClick={() => update('emoji', em)}
@@ -196,19 +197,19 @@ const GoalCard = ({ goal, onEdit, onDelete }) => {
             {goal.emoji || '🎯'}
           </div>
           <div>
-            <h3 className="font-display font-semibold text-white text-base leading-tight">{goal.title}</h3>
+            <h3 className="font-display font-semibold text-text-primary text-base leading-tight">{goal.title}</h3>
             {goal.description && (
               <p className="text-text-muted text-xs mt-0.5 line-clamp-1">{goal.description}</p>
             )}
           </div>
         </div>
         <div className="flex gap-1 flex-shrink-0">
-          <button className="p-1.5 rounded-lg text-text-muted hover:text-white transition-colors"
-            style={{ background: 'rgba(255,255,255,0.04)' }} onClick={onEdit}>
+          <button className="p-1.5 rounded-lg text-text-muted hover:text-text-primary transition-colors"
+            style={{ background: 'var(--surface-2)' }} onClick={onEdit}>
             <Edit3 size={13} />
           </button>
           <button className="p-1.5 rounded-lg text-text-muted hover:text-brand-red transition-colors"
-            style={{ background: 'rgba(255,255,255,0.04)' }} onClick={onDelete}>
+            style={{ background: 'var(--surface-2)' }} onClick={onDelete}>
             <Trash2 size={13} />
           </button>
         </div>
@@ -218,7 +219,7 @@ const GoalCard = ({ goal, onEdit, onDelete }) => {
       <div className="flex items-end justify-between mb-3">
         <div>
           <p className="text-text-muted text-xs mb-0.5">Terkumpul</p>
-          <p className="font-mono font-bold text-xl text-white">{formatIDR(goal.current_amount, true)}</p>
+          <p className="font-mono font-bold text-xl text-text-primary">{formatIDR(goal.current_amount, true)}</p>
         </div>
         <div className="text-right">
           <p className="text-text-muted text-xs mb-0.5">Target</p>
@@ -244,19 +245,19 @@ const GoalCard = ({ goal, onEdit, onDelete }) => {
         </div>
         <div className="flex justify-between mt-1.5">
           <span className="text-text-muted text-xs">{formatIDR(remaining, true)} lagi</span>
-          <span className="text-white text-xs font-semibold font-mono">{pct.toFixed(1)}%</span>
+          <span className="text-text-primary text-xs font-semibold font-mono">{pct.toFixed(1)}%</span>
         </div>
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/5">
+      <div className="grid grid-cols-3 gap-2 pt-3 border-t border-glass-border">
         {/* Months estimate */}
         <div className="text-center">
           <div className="flex items-center justify-center gap-1 mb-0.5">
             <Clock size={11} className="text-brand-violet" />
             <p className="text-text-muted text-[10px]">Estimasi</p>
           </div>
-          <p className="text-white text-xs font-semibold">
+          <p className="text-text-primary text-xs font-semibold">
             {monthlyNet > 0 && monthsLeft !== null
               ? monthsLeft === 0 ? 'Tercapai!' : `${monthsLeft} bulan`
               : monthlyNet <= 0 ? 'Tambah income' : '—'}
@@ -269,7 +270,7 @@ const GoalCard = ({ goal, onEdit, onDelete }) => {
             <Calendar size={11} className="text-brand-gold" />
             <p className="text-text-muted text-[10px]">Deadline</p>
           </div>
-          <p className="text-white text-xs font-semibold">
+          <p className="text-text-primary text-xs font-semibold">
             {goal.deadline
               ? daysUntilDeadline < 0 ? 'Lewat' : `${daysUntilDeadline}h lagi`
               : '—'}
@@ -282,7 +283,7 @@ const GoalCard = ({ goal, onEdit, onDelete }) => {
             <TrendingUp size={11} className="text-brand-teal" />
             <p className="text-text-muted text-[10px]">Butuh/bln</p>
           </div>
-          <p className="text-white text-xs font-semibold">
+          <p className="text-text-primary text-xs font-semibold">
             {goal.deadline && daysUntilDeadline > 0
               ? formatIDR(remaining / Math.max(1, Math.ceil(daysUntilDeadline / 30)), true)
               : '—'}
@@ -309,7 +310,7 @@ const GoalsPage = () => {
       {/* Overview card */}
       <motion.div
         className="glass-card p-5 rounded-2xl"
-        style={{ background: 'linear-gradient(135deg, rgba(245,197,24,0.08), rgba(17,19,24,0.98))' }}
+        style={{ background: 'linear-gradient(135deg, rgba(245,197,24,0.08), var(--bg-card))' }}
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
       >
@@ -323,7 +324,7 @@ const GoalsPage = () => {
           <div className="flex gap-4 text-right flex-wrap">
             <div>
               <p className="text-text-muted text-xs">Terkumpul</p>
-              <p className="text-white font-mono font-semibold">{formatIDR(totalCurrentAmount, true)}</p>
+              <p className="text-text-primary font-mono font-semibold">{formatIDR(totalCurrentAmount, true)}</p>
             </div>
             <div>
               <p className="text-text-muted text-xs">Total Target</p>
@@ -360,7 +361,7 @@ const GoalsPage = () => {
             <TrendingUp size={16} className="text-brand-violet" />
           </div>
           <div className="text-sm">
-            <span className="text-white font-medium">Simulasi: </span>
+            <span className="text-text-primary font-medium">Simulasi: </span>
             <span className="text-text-secondary">Dengan rata-rata tabungan </span>
             <span className="text-brand-violet font-semibold font-mono">{formatIDR(monthlyNet, true)}/bln</span>
             <span className="text-text-secondary">, kamu butuh </span>
@@ -391,7 +392,7 @@ const GoalsPage = () => {
         <motion.div className="glass-card p-12 rounded-2xl text-center"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <p className="text-5xl mb-4">🎯</p>
-          <p className="font-display text-lg font-semibold text-white mb-2">Belum ada target kekayaan</p>
+          <p className="font-display text-lg font-semibold text-text-primary mb-2">Belum ada target kekayaan</p>
           <p className="text-text-secondary text-sm mb-5">Buat target keuangan pertamamu dan mulai perjalanan menuju kebebasan finansial!</p>
           <button className="btn-primary px-6 py-2.5 text-sm"
             onClick={() => { setEditData(null); setShowForm(true) }}>
@@ -421,9 +422,9 @@ const GoalsPage = () => {
         {confirmDelete && (
           <div className="modal-backdrop">
             <motion.div className="modal-content p-6 max-w-sm"
-              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>
+              initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.92 }} transition={{ type: 'spring', stiffness: 320, damping: 24 }}>
               <p className="text-2xl text-center mb-3">🗑️</p>
-              <h3 className="font-display font-bold text-white text-center mb-2">Hapus Target?</h3>
+              <h3 className="font-display font-bold text-text-primary text-center mb-2">Hapus Target?</h3>
               <p className="text-text-secondary text-sm text-center mb-5">Progress yang sudah kamu capai akan hilang.</p>
               <div className="flex gap-3">
                 <button className="btn-glass flex-1 py-2.5 text-sm" onClick={() => setConfirmDelete(null)}>Batal</button>

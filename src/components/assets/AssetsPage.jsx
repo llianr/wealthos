@@ -40,13 +40,13 @@ const AssetForm = ({ onClose, editData = null }) => {
     <div className="modal-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
       <motion.div
         className="modal-content p-6"
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.96, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        transition={{ type: 'spring', damping: 20 }}
+        exit={{ opacity: 0, scale: 0.96, y: 16 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 26 }}
       >
         <div className="flex items-center justify-between mb-6">
-          <h3 className="font-display text-xl font-bold text-white">
+          <h3 className="font-display text-xl font-bold text-text-primary">
             {editData ? '✏️ Edit Aset' : '💎 Tambah Aset'}
           </h3>
           <button className="btn-glass p-2 rounded-xl" onClick={onClose}><X size={18} /></button>
@@ -61,9 +61,9 @@ const AssetForm = ({ onClose, editData = null }) => {
                 <button key={at.value} type="button"
                   className="p-2.5 rounded-xl text-xs font-medium flex flex-col items-center gap-1 transition-all"
                   style={{
-                    background: form.type === at.value ? 'rgba(245,197,24,0.15)' : 'rgba(255,255,255,0.04)',
-                    border: form.type === at.value ? '1px solid rgba(245,197,24,0.35)' : '1px solid rgba(255,255,255,0.06)',
-                    color: form.type === at.value ? '#F5C518' : '#8B92A5',
+                    background: form.type === at.value ? 'rgba(245,197,24,0.15)' : 'var(--surface-2)',
+                    border: form.type === at.value ? '1px solid rgba(245,197,24,0.35)' : '1px solid var(--surface-3)',
+                    color: form.type === at.value ? '#F5C518' : 'var(--text-secondary)',
                   }}
                   onClick={() => update('type', at.value)}>
                   <span className="text-xl">{at.emoji}</span>
@@ -145,7 +145,7 @@ const AssetForm = ({ onClose, editData = null }) => {
 
 const ASSET_COLORS = {
   tabungan: '#6C63FF', cash: '#F5C518', kripto: '#FF8C42',
-  saham: '#00D4B4', properti: '#FF4D6D', kendaraan: '#8B84FF', lainnya: '#8B92A5',
+  saham: '#00D4B4', properti: '#FF4D6D', kendaraan: '#8B84FF', lainnya: 'var(--text-secondary)',
 }
 
 const AssetsPage = () => {
@@ -174,7 +174,7 @@ const AssetsPage = () => {
     .map(([type, data]) => ({
       name: getAssetInfo(type)?.label || type,
       value: data.total,
-      color: ASSET_COLORS[type] || '#8B92A5',
+      color: ASSET_COLORS[type] || 'var(--text-secondary)',
       type,
     }))
     .filter(d => d.value > 0)
@@ -186,7 +186,7 @@ const AssetsPage = () => {
     if (!active || !payload?.length) return null
     return (
       <div className="custom-tooltip text-sm">
-        <p className="text-white font-semibold">{payload[0].name}</p>
+        <p className="text-text-primary font-semibold">{payload[0].name}</p>
         <p className="text-text-secondary">{formatIDR(payload[0].value)}</p>
         <p className="text-text-muted text-xs">{((payload[0].value / totalAssets) * 100).toFixed(1)}%</p>
       </div>
@@ -197,7 +197,7 @@ const AssetsPage = () => {
     <div className="space-y-5 pb-24 lg:pb-8">
       {/* Overview */}
       <motion.div className="glass-card p-5 rounded-2xl"
-        style={{ background: 'linear-gradient(135deg, rgba(245,197,24,0.07), rgba(17,19,24,0.98))' }}
+        style={{ background: 'linear-gradient(135deg, rgba(245,197,24,0.07), var(--bg-card))' }}
         initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
@@ -229,7 +229,7 @@ const AssetsPage = () => {
                   <div key={i} className="flex items-center gap-1.5 text-xs">
                     <div className="w-2 h-2 rounded-full" style={{ background: d.color }} />
                     <span className="text-text-secondary">{d.name}</span>
-                    <span className="text-white font-mono ml-1">{((d.value / totalAssets) * 100).toFixed(0)}%</span>
+                    <span className="text-text-primary font-mono ml-1">{((d.value / totalAssets) * 100).toFixed(0)}%</span>
                   </div>
                 ))}
               </div>
@@ -244,9 +244,9 @@ const AssetsPage = () => {
           <button key={t.value}
             className="flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all"
             style={{
-              background: activeType === t.value ? ASSET_COLORS[t.value] ? `${ASSET_COLORS[t.value]}20` : 'rgba(108,99,255,0.2)' : 'rgba(255,255,255,0.04)',
-              border: `1px solid ${activeType === t.value ? (ASSET_COLORS[t.value] || '#6C63FF') + '40' : 'rgba(255,255,255,0.06)'}`,
-              color: activeType === t.value ? ASSET_COLORS[t.value] || '#6C63FF' : '#8B92A5',
+              background: activeType === t.value ? ASSET_COLORS[t.value] ? `${ASSET_COLORS[t.value]}20` : 'rgba(108,99,255,0.2)' : 'var(--surface-2)',
+              border: `1px solid ${activeType === t.value ? (ASSET_COLORS[t.value] || '#6C63FF') + '40' : 'var(--surface-3)'}`,
+              color: activeType === t.value ? ASSET_COLORS[t.value] || '#6C63FF' : 'var(--text-secondary)',
             }}
             onClick={() => setActiveType(t.value)}>
             <span>{t.emoji}</span>
@@ -270,7 +270,7 @@ const AssetsPage = () => {
         <motion.div className="glass-card p-12 rounded-2xl text-center"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <p className="text-5xl mb-4">💼</p>
-          <p className="font-display text-lg font-semibold text-white mb-2">
+          <p className="font-display text-lg font-semibold text-text-primary mb-2">
             {activeType === 'all' ? 'Belum ada aset dicatat' : `Belum ada aset ${getAssetInfo(activeType)?.label}`}
           </p>
           <p className="text-text-secondary text-sm mb-5">Catat semua asetmu untuk memantau total kekayaan!</p>
@@ -283,7 +283,7 @@ const AssetsPage = () => {
             const info = getAssetInfo(asset.type)
             const pnl = Number(asset.current_value || asset.value || 0) - Number(asset.value || 0)
             const pnlPct = Number(asset.value) > 0 ? (pnl / Number(asset.value)) * 100 : 0
-            const color = ASSET_COLORS[asset.type] || '#8B92A5'
+            const color = ASSET_COLORS[asset.type] || 'var(--text-secondary)'
 
             return (
               <motion.div key={asset.id}
@@ -302,25 +302,25 @@ const AssetsPage = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-white font-semibold text-sm">{asset.name}</p>
+                        <p className="text-text-primary font-semibold text-sm">{asset.name}</p>
                         <p className="text-text-muted text-xs">
                           {info?.label}{asset.institution ? ` · ${asset.institution}` : ''}
                         </p>
                       </div>
                       <div className="flex gap-1">
-                        <button className="p-1.5 rounded-lg text-text-muted hover:text-white"
-                          style={{ background: 'rgba(255,255,255,0.04)' }}
+                        <button className="p-1.5 rounded-lg text-text-muted hover:text-text-primary"
+                          style={{ background: 'var(--surface-2)' }}
                           onClick={() => { setEditData(asset); setShowForm(true) }}>
                           <Edit3 size={12} />
                         </button>
                         <button className="p-1.5 rounded-lg text-text-muted hover:text-brand-red"
-                          style={{ background: 'rgba(255,255,255,0.04)' }}
+                          style={{ background: 'var(--surface-2)' }}
                           onClick={() => setConfirmDelete(asset.id)}>
                           <Trash2 size={12} />
                         </button>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5">
+                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-glass-border">
                       <div>
                         <p className="text-text-muted text-[10px]">Nilai Saat Ini</p>
                         <p className="font-mono font-bold text-base" style={{ color }}>
@@ -338,7 +338,7 @@ const AssetsPage = () => {
                       )}
                       <div className="text-right">
                         <p className="text-text-muted text-[10px]">Porsi</p>
-                        <p className="font-mono text-sm font-semibold text-white">
+                        <p className="font-mono text-sm font-semibold text-text-primary">
                           {totalAssets > 0 ? ((Number(asset.current_value || asset.value || 0) / totalAssets) * 100).toFixed(1) : 0}%
                         </p>
                       </div>
@@ -362,9 +362,9 @@ const AssetsPage = () => {
         {confirmDelete && (
           <div className="modal-backdrop">
             <motion.div className="modal-content p-6 max-w-sm"
-              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>
+              initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.92 }} transition={{ type: 'spring', stiffness: 320, damping: 24 }}>
               <p className="text-2xl text-center mb-3">🗑️</p>
-              <h3 className="font-display font-bold text-white text-center mb-4">Hapus aset ini?</h3>
+              <h3 className="font-display font-bold text-text-primary text-center mb-4">Hapus aset ini?</h3>
               <div className="flex gap-3">
                 <button className="btn-glass flex-1 py-2.5 text-sm" onClick={() => setConfirmDelete(null)}>Batal</button>
                 <button className="flex-1 py-2.5 text-sm font-semibold rounded-xl"

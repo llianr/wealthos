@@ -109,7 +109,7 @@ const AuthPage = () => {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              <h2 className="font-display text-2xl font-bold text-white mb-1">
+              <h2 className="font-display text-2xl font-bold text-text-primary mb-1">
                 {mode === 'login' ? 'Selamat datang kembali 👋' : mode === 'register' ? 'Buat akun gratis' : 'Reset password'}
               </h2>
               <p className="text-text-secondary text-sm">
@@ -122,7 +122,7 @@ const AuthPage = () => {
         {/* Card */}
         <motion.div
           className="glass-card p-6 rounded-3xl"
-          style={{ background: 'linear-gradient(135deg, rgba(19,21,28,0.98) 0%, rgba(10,11,15,0.98) 100%)' }}
+          style={{ background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-primary) 100%)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -207,7 +207,7 @@ const AuthPage = () => {
                     />
                     <button
                       type="button"
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-white"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
                       onClick={() => setShowPass(!showPass)}
                     >
                       {showPass ? <EyeOff size={16} /> : <Eye size={16} />}

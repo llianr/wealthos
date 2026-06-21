@@ -42,12 +42,12 @@ const MobileNav = () => {
               >
                 <Icon
                   size={20}
-                  style={{ color: isActive ? '#6C63FF' : '#8B92A5' }}
+                  style={{ color: isActive ? '#6C63FF' : 'var(--text-secondary)' }}
                 />
               </div>
               <span
                 className="text-[10px] font-medium"
-                style={{ color: isActive ? '#6C63FF' : '#8B92A5' }}
+                style={{ color: isActive ? '#6C63FF' : 'var(--text-secondary)' }}
               >
                 {item.label}
               </span>

@@ -37,7 +37,7 @@ const Toast = () => {
               key={toast.id}
               className="flex items-center gap-3 px-4 py-3 rounded-xl pointer-events-auto"
               style={{
-                background: 'rgba(17,19,24,0.98)',
+                background: 'var(--bg-card)',
                 border: `1px solid ${config.border}`,
                 backdropFilter: 'blur(20px)',
                 boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
@@ -55,7 +55,7 @@ const Toast = () => {
               >
                 <Icon size={16} style={{ color: config.color }} />
               </div>
-              <p className="text-white text-sm font-medium">{toast.message}</p>
+              <p className="text-text-primary text-sm font-medium">{toast.message}</p>
             </motion.div>
           )
         })()}

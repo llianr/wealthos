@@ -54,7 +54,7 @@ const StatCard = ({
 
         {/* Value */}
         <motion.div
-          className={`font-display font-bold leading-none mb-2 ${isNetWorth ? 'text-3xl text-gradient-wealth' : 'text-2xl text-white'}`}
+          className={`font-display font-bold leading-none mb-2 ${isNetWorth ? 'text-3xl text-gradient-wealth' : 'text-2xl text-text-primary'}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: delay + 0.2, duration: 0.5 }}

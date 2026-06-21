@@ -10,7 +10,7 @@ import {
 } from 'recharts'
 import { useApp } from '../../contexts/AppContext'
 import StatCard from './StatCard'
-import { formatIDR, formatDateShort, getMonthYear } from '../../utils/formatters'
+import { formatIDR, formatDateShort, getMonthYear, getDisplayCategory } from '../../utils/formatters'
 import { getDailyQuote as getQuote } from '../../utils/quotes'
 
 const CHART_COLORS = {
@@ -29,7 +29,7 @@ const CustomTooltip = ({ active, payload, label }) => {
         <div key={i} className="flex items-center gap-2 text-sm">
           <div className="w-2 h-2 rounded-full" style={{ background: entry.color }} />
           <span className="text-text-secondary">{entry.name}:</span>
-          <span className="text-white font-medium font-mono">{formatIDR(entry.value, true)}</span>
+          <span className="text-text-primary font-medium font-mono">{formatIDR(entry.value, true)}</span>
         </div>
       ))}
     </div>
@@ -104,7 +104,7 @@ const Dashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         style={{
-          background: 'linear-gradient(135deg, rgba(108,99,255,0.12) 0%, rgba(17,19,24,0.98) 50%, rgba(0,212,180,0.08) 100%)',
+          background: 'linear-gradient(135deg, rgba(108,99,255,0.12) 0%, var(--bg-card) 50%, rgba(0,212,180,0.08) 100%)',
         }}
       >
         {/* Animated border */}
@@ -140,7 +140,7 @@ const Dashboard = () => {
                   {monthlyNet >= 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
                   {formatIDR(Math.abs(monthlyNet), true)} bulan ini
                 </div>
-                <div className="h-4 w-px bg-white/10" />
+                <div className="h-4 w-px" style={{ background: 'var(--glass-border)' }} />
                 <span className="text-text-secondary text-sm">
                   Aset + Investasi
                 </span>
@@ -151,11 +151,11 @@ const Dashboard = () => {
             <div className="flex gap-4">
               <div className="text-right">
                 <p className="text-text-muted text-xs mb-1">Aset</p>
-                <p className="text-white font-mono font-semibold text-lg">{formatIDR(totalAssets, true)}</p>
+                <p className="text-text-primary font-mono font-semibold text-lg">{formatIDR(totalAssets, true)}</p>
               </div>
               <div className="text-right">
                 <p className="text-text-muted text-xs mb-1">Investasi</p>
-                <p className="text-white font-mono font-semibold text-lg">{formatIDR(totalInvestments, true)}</p>
+                <p className="text-text-primary font-mono font-semibold text-lg">{formatIDR(totalInvestments, true)}</p>
               </div>
               <div className="text-right">
                 <p className="text-text-muted text-xs mb-1">ROI</p>
@@ -217,7 +217,7 @@ const Dashboard = () => {
         >
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h3 className="font-display font-semibold text-white">Pemasukan vs Pengeluaran</h3>
+              <h3 className="font-display font-semibold text-text-primary">Pemasukan vs Pengeluaran</h3>
               <p className="text-text-secondary text-xs mt-0.5">6 bulan terakhir</p>
             </div>
             <BarChart2 size={18} className="text-text-muted" />
@@ -233,9 +233,9 @@ const Dashboard = () => {
           ) : (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={chartData} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                <XAxis dataKey="name" tick={{ fill: '#8B92A5', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: '#8B92A5', fontSize: 10 }} axisLine={false} tickLine={false}
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--glass-border)" vertical={false} />
+                <XAxis dataKey="name" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} axisLine={false} tickLine={false}
                   tickFormatter={v => formatIDR(v, true)} />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="Pemasukan" fill="#00D4B4" radius={[4, 4, 0, 0]} />
@@ -254,7 +254,7 @@ const Dashboard = () => {
         >
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h3 className="font-display font-semibold text-white">Pertumbuhan Tabungan</h3>
+              <h3 className="font-display font-semibold text-text-primary">Pertumbuhan Tabungan</h3>
               <p className="text-text-secondary text-xs mt-0.5">Akumulasi 6 bulan</p>
             </div>
             <Activity size={18} className="text-text-muted" />
@@ -276,9 +276,9 @@ const Dashboard = () => {
                     <stop offset="95%" stopColor="#6C63FF" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                <XAxis dataKey="name" tick={{ fill: '#8B92A5', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: '#8B92A5', fontSize: 10 }} axisLine={false} tickLine={false}
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--glass-border)" vertical={false} />
+                <XAxis dataKey="name" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} axisLine={false} tickLine={false}
                   tickFormatter={v => formatIDR(v, true)} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area type="monotone" dataKey="Tabungan" stroke="#6C63FF" strokeWidth={2}
@@ -299,7 +299,7 @@ const Dashboard = () => {
           transition={{ delay: 0.4, duration: 0.4 }}
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-display font-semibold text-white">Transaksi Terbaru</h3>
+            <h3 className="font-display font-semibold text-text-primary">Transaksi Terbaru</h3>
             <Zap size={16} className="text-text-muted" />
           </div>
 
@@ -312,7 +312,9 @@ const Dashboard = () => {
             </div>
           ) : (
             <div className="space-y-2">
-              {recentTx.map((tx, i) => (
+              {recentTx.map((tx, i) => {
+                const catInfo = getDisplayCategory(tx)
+                return (
                 <motion.div
                   key={tx.id}
                   className="transaction-item"
@@ -329,8 +331,8 @@ const Dashboard = () => {
                     {tx.type === 'income' ? '↑' : '↓'}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-white text-sm font-medium truncate">{tx.description || tx.category}</p>
-                    <p className="text-text-muted text-xs">{formatDateShort(tx.date)} · {tx.category}</p>
+                    <p className="text-text-primary text-sm font-medium truncate">{tx.description || catInfo.label}</p>
+                    <p className="text-text-muted text-xs">{formatDateShort(tx.date)} · {catInfo.label}</p>
                   </div>
                   <span
                     className="font-mono text-sm font-semibold flex-shrink-0"
@@ -339,7 +341,8 @@ const Dashboard = () => {
                     {tx.type === 'income' ? '+' : '-'}{formatIDR(tx.amount, true)}
                   </span>
                 </motion.div>
-              ))}
+                )
+              })}
             </div>
           )}
         </motion.div>
@@ -352,7 +355,7 @@ const Dashboard = () => {
           transition={{ delay: 0.45, duration: 0.4 }}
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-display font-semibold text-white">Komposisi Aset</h3>
+            <h3 className="font-display font-semibold text-text-primary">Komposisi Aset</h3>
             <Layers size={16} className="text-text-muted" />
           </div>
 
@@ -388,7 +391,7 @@ const Dashboard = () => {
                   <div key={i} className="flex items-center gap-2 text-xs">
                     <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: entry.color }} />
                     <span className="text-text-secondary truncate">{entry.name}</span>
-                    <span className="text-white font-mono ml-auto">{formatIDR(entry.value, true)}</span>
+                    <span className="text-text-primary font-mono ml-auto">{formatIDR(entry.value, true)}</span>
                   </div>
                 ))}
               </div>
@@ -401,7 +404,7 @@ const Dashboard = () => {
       <motion.div
         className="glass-card p-5 rounded-2xl"
         style={{
-          background: 'linear-gradient(135deg, rgba(245,197,24,0.08) 0%, rgba(17,19,24,0.9) 100%)',
+          background: 'linear-gradient(135deg, rgba(245,197,24,0.08) 0%, var(--bg-card) 100%)',
           borderColor: 'rgba(245,197,24,0.15)',
         }}
         initial={{ opacity: 0, y: 20 }}
@@ -412,7 +415,7 @@ const Dashboard = () => {
           <div className="text-3xl flex-shrink-0 animate-pulse-slow">✨</div>
           <div>
             <p className="text-xs text-brand-gold font-medium uppercase tracking-widest mb-2">Quote Hari Ini</p>
-            <p className="text-white text-sm leading-relaxed italic font-medium">
+            <p className="text-text-primary text-sm leading-relaxed italic font-medium">
               "{quote.quote}"
             </p>
             <p className="text-text-secondary text-xs mt-2 font-medium">— {quote.author}</p>

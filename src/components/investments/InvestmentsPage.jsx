@@ -57,13 +57,13 @@ const InvestmentForm = ({ onClose, editData = null }) => {
     <div className="modal-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
       <motion.div
         className="modal-content p-6"
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.96, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        transition={{ type: 'spring', damping: 20 }}
+        exit={{ opacity: 0, scale: 0.96, y: 16 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 26 }}
       >
         <div className="flex items-center justify-between mb-6">
-          <h3 className="font-display text-xl font-bold text-white">
+          <h3 className="font-display text-xl font-bold text-text-primary">
             {editData ? '✏️ Edit Investasi' : '📈 Catat Investasi'}
           </h3>
           <button className="btn-glass p-2 rounded-xl" onClick={onClose}><X size={18} /></button>
@@ -78,9 +78,9 @@ const InvestmentForm = ({ onClose, editData = null }) => {
                 <button key={t.value} type="button"
                   className="p-2 rounded-xl text-xs flex flex-col items-center gap-1 transition-all"
                   style={{
-                    background: form.type === t.value ? 'rgba(108,99,255,0.2)' : 'rgba(255,255,255,0.04)',
-                    border: `1px solid ${form.type === t.value ? 'rgba(108,99,255,0.4)' : 'rgba(255,255,255,0.06)'}`,
-                    color: form.type === t.value ? '#8B84FF' : '#8B92A5',
+                    background: form.type === t.value ? 'rgba(108,99,255,0.2)' : 'var(--surface-2)',
+                    border: `1px solid ${form.type === t.value ? 'rgba(108,99,255,0.4)' : 'var(--surface-3)'}`,
+                    color: form.type === t.value ? '#8B84FF' : 'var(--text-secondary)',
                   }}
                   onClick={() => update('type', t.value)}>
                   <span className="text-xl">{t.emoji}</span>
@@ -209,7 +209,7 @@ const InvestmentsPage = () => {
     if (!active || !payload?.length) return null
     return (
       <div className="custom-tooltip text-sm">
-        <p className="text-white font-semibold mb-1">{label}</p>
+        <p className="text-text-primary font-semibold mb-1">{label}</p>
         <p className="font-mono" style={{ color: payload[0].value >= 0 ? '#00D4B4' : '#FF4D6D' }}>
           ROI: {payload[0].value >= 0 ? '+' : ''}{payload[0].value.toFixed(2)}%
         </p>
@@ -221,12 +221,12 @@ const InvestmentsPage = () => {
     <div className="space-y-5 pb-24 lg:pb-8">
       {/* Portfolio summary */}
       <motion.div className="glass-card p-5 rounded-2xl"
-        style={{ background: 'linear-gradient(135deg, rgba(108,99,255,0.09), rgba(17,19,24,0.98))' }}
+        style={{ background: 'linear-gradient(135deg, rgba(108,99,255,0.09), var(--bg-card))' }}
         initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: 'Total Portfolio', value: formatIDR(totalInvestments), color: '#6C63FF' },
-            { label: 'Total Modal', value: formatIDR(totalModal), color: '#8B92A5' },
+            { label: 'Total Modal', value: formatIDR(totalModal), color: 'var(--text-secondary)' },
             {
               label: 'Total P&L',
               value: `${totalPnL >= 0 ? '+' : ''}${formatIDR(totalPnL, true)}`,
@@ -251,14 +251,14 @@ const InvestmentsPage = () => {
         <motion.div className="glass-card p-5 rounded-2xl"
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-display font-semibold text-white">Performa Portfolio (ROI %)</h3>
+            <h3 className="font-display font-semibold text-text-primary">Performa Portfolio (ROI %)</h3>
             <BarChart2 size={16} className="text-text-muted" />
           </div>
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={perfChartData} barSize={28}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-              <XAxis dataKey="name" tick={{ fill: '#8B92A5', fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: '#8B92A5', fontSize: 10 }} axisLine={false} tickLine={false}
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--surface-2)" vertical={false} />
+              <XAxis dataKey="name" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} axisLine={false} tickLine={false}
                 tickFormatter={v => `${v.toFixed(0)}%`} />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="ROI" radius={[4, 4, 0, 0]}>
@@ -278,9 +278,9 @@ const InvestmentsPage = () => {
             <button key={t.value}
               className="flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all"
               style={{
-                background: activeType === t.value ? 'rgba(108,99,255,0.2)' : 'rgba(255,255,255,0.04)',
-                border: `1px solid ${activeType === t.value ? 'rgba(108,99,255,0.4)' : 'rgba(255,255,255,0.06)'}`,
-                color: activeType === t.value ? '#8B84FF' : '#8B92A5',
+                background: activeType === t.value ? 'rgba(108,99,255,0.2)' : 'var(--surface-2)',
+                border: `1px solid ${activeType === t.value ? 'rgba(108,99,255,0.4)' : 'var(--surface-3)'}`,
+                color: activeType === t.value ? '#8B84FF' : 'var(--text-secondary)',
               }}
               onClick={() => setActiveType(t.value)}>
               {t.emoji && <span>{t.emoji}</span>}
@@ -299,7 +299,7 @@ const InvestmentsPage = () => {
         <motion.div className="glass-card p-12 rounded-2xl text-center"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <p className="text-5xl mb-4">📈</p>
-          <p className="font-display text-lg font-semibold text-white mb-2">Portfolio masih kosong</p>
+          <p className="font-display text-lg font-semibold text-text-primary mb-2">Portfolio masih kosong</p>
           <p className="text-text-secondary text-sm mb-5">Catat investasimu dan pantau performa dari satu tempat.</p>
           <button className="btn-primary px-6 py-2.5 text-sm"
             onClick={() => { setEditData(null); setShowForm(true) }}>Catat Investasi Pertama</button>
@@ -327,7 +327,7 @@ const InvestmentsPage = () => {
                       {typeInfo.emoji}
                     </div>
                     <div>
-                      <p className="text-white font-semibold text-sm">{inv.name}</p>
+                      <p className="text-text-primary font-semibold text-sm">{inv.name}</p>
                       <p className="text-text-muted text-xs">
                         {inv.ticker && <span className="text-brand-violet font-mono">{inv.ticker} · </span>}
                         {typeInfo.label}{inv.platform && ` · ${inv.platform}`}
@@ -335,13 +335,13 @@ const InvestmentsPage = () => {
                     </div>
                   </div>
                   <div className="flex gap-1">
-                    <button className="p-1.5 rounded-lg text-text-muted hover:text-white"
-                      style={{ background: 'rgba(255,255,255,0.04)' }}
+                    <button className="p-1.5 rounded-lg text-text-muted hover:text-text-primary"
+                      style={{ background: 'var(--surface-2)' }}
                       onClick={() => { setEditData(inv); setShowForm(true) }}>
                       <Edit3 size={12} />
                     </button>
                     <button className="p-1.5 rounded-lg text-text-muted hover:text-brand-red"
-                      style={{ background: 'rgba(255,255,255,0.04)' }}
+                      style={{ background: 'var(--surface-2)' }}
                       onClick={() => setConfirmDelete(inv.id)}>
                       <Trash2 size={12} />
                     </button>
@@ -349,14 +349,14 @@ const InvestmentsPage = () => {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-4 gap-2 p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                <div className="grid grid-cols-4 gap-2 p-3 rounded-xl" style={{ background: 'var(--surface-1)' }}>
                   <div>
                     <p className="text-text-muted text-[10px] mb-0.5">Modal</p>
-                    <p className="font-mono text-xs font-semibold text-white">{formatIDR(inv.modal, true)}</p>
+                    <p className="font-mono text-xs font-semibold text-text-primary">{formatIDR(inv.modal, true)}</p>
                   </div>
                   <div>
                     <p className="text-text-muted text-[10px] mb-0.5">Nilai Kini</p>
-                    <p className="font-mono text-xs font-semibold text-white">{formatIDR(inv.current_value || inv.modal, true)}</p>
+                    <p className="font-mono text-xs font-semibold text-text-primary">{formatIDR(inv.current_value || inv.modal, true)}</p>
                   </div>
                   <div>
                     <p className="text-text-muted text-[10px] mb-0.5">P&L</p>
@@ -393,9 +393,9 @@ const InvestmentsPage = () => {
         {confirmDelete && (
           <div className="modal-backdrop">
             <motion.div className="modal-content p-6 max-w-sm"
-              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>
+              initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.92 }} transition={{ type: 'spring', stiffness: 320, damping: 24 }}>
               <p className="text-2xl text-center mb-3">🗑️</p>
-              <h3 className="font-display font-bold text-white text-center mb-4">Hapus investasi ini?</h3>
+              <h3 className="font-display font-bold text-text-primary text-center mb-4">Hapus investasi ini?</h3>
               <div className="flex gap-3">
                 <button className="btn-glass flex-1 py-2.5 text-sm" onClick={() => setConfirmDelete(null)}>Batal</button>
                 <button className="flex-1 py-2.5 text-sm font-semibold rounded-xl"

@@ -103,7 +103,7 @@ const LoadingScreen = ({ onComplete }) => {
           className="w-64 space-y-3"
         >
           {/* Progress bar */}
-          <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+          <div className="h-1 rounded-full overflow-hidden" style={{ background: 'var(--surface-4)' }}>
             <motion.div
               className="h-full rounded-full"
               style={{

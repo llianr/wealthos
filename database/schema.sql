@@ -11,15 +11,16 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- TABLE: transactions
 -- ==============================================
 CREATE TABLE IF NOT EXISTS transactions (
-  id          UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  user_id     UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  type        TEXT NOT NULL CHECK (type IN ('income', 'expense')),
-  category    TEXT NOT NULL,
-  amount      NUMERIC(18, 2) NOT NULL CHECK (amount > 0),
-  description TEXT,
-  date        DATE NOT NULL DEFAULT CURRENT_DATE,
-  created_at  TIMESTAMPTZ DEFAULT NOW(),
-  updated_at  TIMESTAMPTZ DEFAULT NOW()
+  id              UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id         UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  type            TEXT NOT NULL CHECK (type IN ('income', 'expense')),
+  category        TEXT NOT NULL,
+  custom_category TEXT,
+  amount          NUMERIC(18, 2) NOT NULL CHECK (amount > 0),
+  description     TEXT,
+  date            DATE NOT NULL DEFAULT CURRENT_DATE,
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ==============================================

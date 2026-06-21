@@ -4,7 +4,7 @@ import { Plus, Search, Filter, Trash2, Edit3, ChevronDown, X, ArrowUpRight, Arro
 import { useApp } from '../../contexts/AppContext'
 import {
   formatIDR, formatDate, formatDateInput,
-  INCOME_CATEGORIES, EXPENSE_CATEGORIES, getCategoryInfo
+  INCOME_CATEGORIES, EXPENSE_CATEGORIES, getDisplayCategory
 } from '../../utils/formatters'
 
 const TransactionForm = ({ onClose, editData = null }) => {
@@ -13,6 +13,7 @@ const TransactionForm = ({ onClose, editData = null }) => {
   const [form, setForm] = useState({
     type: editData?.type || 'income',
     category: editData?.category || '',
+    custom_category: editData?.custom_category || '',
     amount: editData?.amount ? String(editData.amount) : '',
     description: editData?.description || '',
     date: editData?.date || formatDateInput(),
@@ -21,12 +22,18 @@ const TransactionForm = ({ onClose, editData = null }) => {
   const update = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
   const categories = form.type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES
+  const isCustomCategory = form.category === 'lainnya'
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.amount || !form.category) return
+    if (isCustomCategory && !form.custom_category.trim()) return
     setLoading(true)
-    const data = { ...form, amount: Number(form.amount) }
+    const data = {
+      ...form,
+      amount: Number(form.amount),
+      custom_category: isCustomCategory ? form.custom_category.trim() : null,
+    }
     let ok
     if (editData) ok = await updateTransaction(editData.id, data)
     else ok = await addTransaction(data)
@@ -38,14 +45,14 @@ const TransactionForm = ({ onClose, editData = null }) => {
     <div className="modal-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <motion.div
         className="modal-content p-6 w-full"
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.96, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        transition={{ type: 'spring', damping: 20 }}
+        exit={{ opacity: 0, scale: 0.96, y: 16 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 26 }}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h3 className="font-display text-xl font-bold text-white">
+          <h3 className="font-display text-xl font-bold text-text-primary">
             {editData ? '✏️ Edit Transaksi' : '➕ Tambah Transaksi'}
           </h3>
           <button className="btn-glass p-2 rounded-xl" onClick={onClose}>
@@ -55,7 +62,7 @@ const TransactionForm = ({ onClose, editData = null }) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Type toggle */}
-          <div className="grid grid-cols-2 gap-2 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)' }}>
+          <div className="grid grid-cols-2 gap-2 p-1 rounded-xl" style={{ background: 'var(--surface-2)' }}>
             {['income', 'expense'].map(t => (
               <button
                 key={t}
@@ -67,7 +74,7 @@ const TransactionForm = ({ onClose, editData = null }) => {
                     : 'transparent',
                   color: form.type === t
                     ? t === 'income' ? '#00D4B4' : '#FF4D6D'
-                    : '#8B92A5',
+                    : 'var(--text-secondary)',
                   border: form.type === t
                     ? `1px solid ${t === 'income' ? 'rgba(0,212,180,0.3)' : 'rgba(255,77,109,0.3)'}`
                     : '1px solid transparent',
@@ -105,11 +112,11 @@ const TransactionForm = ({ onClose, editData = null }) => {
                   style={{
                     background: form.category === cat.value
                       ? 'rgba(108,99,255,0.2)'
-                      : 'rgba(255,255,255,0.04)',
+                      : 'var(--surface-2)',
                     border: form.category === cat.value
                       ? '1px solid rgba(108,99,255,0.4)'
-                      : '1px solid rgba(255,255,255,0.06)',
-                    color: form.category === cat.value ? '#6C63FF' : '#8B92A5',
+                      : '1px solid var(--glass-border)',
+                    color: form.category === cat.value ? '#6C63FF' : 'var(--text-secondary)',
                   }}
                   onClick={() => update('category', cat.value)}
                 >
@@ -118,6 +125,27 @@ const TransactionForm = ({ onClose, editData = null }) => {
                 </button>
               ))}
             </div>
+
+            {/* Custom category name input — appears only when "Lainnya" is picked */}
+            {isCustomCategory && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                className="mt-2 overflow-hidden"
+              >
+                <input
+                  type="text"
+                  className="input-premium py-2.5 px-4 text-sm"
+                  placeholder="Tulis nama kategori kamu sendiri..."
+                  value={form.custom_category}
+                  onChange={e => update('custom_category', e.target.value)}
+                  maxLength={30}
+                  required={isCustomCategory}
+                />
+              </motion.div>
+            )}
           </div>
 
           {/* Description */}
@@ -151,7 +179,7 @@ const TransactionForm = ({ onClose, editData = null }) => {
             <motion.button
               type="submit"
               className="btn-primary flex-[2] py-3 text-sm flex items-center justify-center gap-2"
-              disabled={loading || !form.amount || !form.category}
+              disabled={loading || !form.amount || !form.category || (isCustomCategory && !form.custom_category.trim())}
               whileTap={{ scale: 0.98 }}
             >
               {loading ? <Loader2 size={16} className="animate-spin" /> : null}
@@ -258,14 +286,14 @@ const TransactionPage = () => {
         {/* Filters row */}
         <div className="flex flex-wrap gap-2">
           {/* Type filter */}
-          <div className="flex gap-1 p-0.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.04)' }}>
+          <div className="flex gap-1 p-0.5 rounded-lg" style={{ background: 'var(--surface-2)' }}>
             {[['all', 'Semua'], ['income', 'Pemasukan'], ['expense', 'Pengeluaran']].map(([val, label]) => (
               <button
                 key={val}
                 className="px-3 py-1.5 rounded-md text-xs font-medium transition-all"
                 style={{
                   background: filterType === val ? 'rgba(108,99,255,0.3)' : 'transparent',
-                  color: filterType === val ? '#8B84FF' : '#8B92A5',
+                  color: filterType === val ? '#8B84FF' : 'var(--text-secondary)',
                 }}
                 onClick={() => setFilterType(val)}
               >
@@ -329,12 +357,12 @@ const TransactionPage = () => {
               animate={{ opacity: 1 }}
             >
               <p className="text-4xl mb-3">🔍</p>
-              <p className="text-white font-medium mb-1">Tidak ada transaksi</p>
+              <p className="text-text-primary font-medium mb-1">Tidak ada transaksi</p>
               <p className="text-text-secondary text-sm">Coba ubah filter atau tambah transaksi baru</p>
             </motion.div>
           ) : (
             filtered.map((tx, i) => {
-              const catInfo = getCategoryInfo(tx.category, tx.type)
+              const catInfo = getDisplayCategory(tx)
               return (
                 <motion.div
                   key={tx.id}
@@ -359,7 +387,7 @@ const TransactionPage = () => {
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-white text-sm font-medium truncate">
+                        <p className="text-text-primary text-sm font-medium truncate">
                           {tx.description || catInfo.label}
                         </p>
                         <span className={`badge ${tx.type === 'income' ? 'badge-income' : 'badge-expense'}`}>
@@ -383,15 +411,15 @@ const TransactionPage = () => {
                     {/* Actions */}
                     <div className="flex gap-1 flex-shrink-0">
                       <button
-                        className="p-2 rounded-lg text-text-muted hover:text-white transition-colors"
-                        style={{ background: 'rgba(255,255,255,0.04)' }}
+                        className="p-2 rounded-lg text-text-muted hover:text-text-primary transition-colors"
+                        style={{ background: 'var(--surface-2)' }}
                         onClick={() => handleEdit(tx)}
                       >
                         <Edit3 size={14} />
                       </button>
                       <button
                         className="p-2 rounded-lg text-text-muted hover:text-brand-red transition-colors"
-                        style={{ background: 'rgba(255,255,255,0.04)' }}
+                        style={{ background: 'var(--surface-2)' }}
                         onClick={() => setConfirmDelete(tx.id)}
                       >
                         <Trash2 size={14} />
@@ -421,12 +449,13 @@ const TransactionPage = () => {
           <div className="modal-backdrop">
             <motion.div
               className="modal-content p-6 max-w-sm"
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
+              exit={{ opacity: 0, scale: 0.92 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 24 }}
             >
               <p className="text-2xl mb-3 text-center">🗑️</p>
-              <h3 className="font-display font-bold text-white text-center mb-2">Hapus Transaksi?</h3>
+              <h3 className="font-display font-bold text-text-primary text-center mb-2">Hapus Transaksi?</h3>
               <p className="text-text-secondary text-sm text-center mb-5">
                 Tindakan ini tidak bisa dibatalkan.
               </p>

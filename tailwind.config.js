@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -8,10 +9,10 @@ export default {
     extend: {
       colors: {
         bg: {
-          primary: '#0A0B0F',
-          secondary: '#111318',
-          tertiary: '#181C26',
-          card: '#13151C',
+          primary: 'var(--bg-primary)',
+          secondary: 'var(--bg-secondary)',
+          tertiary: 'var(--bg-tertiary)',
+          card: 'var(--bg-card)',
         },
         brand: {
           violet: '#6C63FF',
@@ -23,14 +24,14 @@ export default {
           orange: '#FF8C42',
         },
         glass: {
-          DEFAULT: 'rgba(255,255,255,0.05)',
-          hover: 'rgba(255,255,255,0.08)',
-          border: 'rgba(255,255,255,0.08)',
+          DEFAULT: 'var(--glass-bg)',
+          hover: 'var(--glass-bg-hover)',
+          border: 'var(--glass-border)',
         },
         text: {
-          primary: '#FFFFFF',
-          secondary: '#8B92A5',
-          muted: '#4A5065',
+          primary: 'var(--text-primary)',
+          secondary: 'var(--text-secondary)',
+          muted: 'var(--text-muted)',
         },
       },
       fontFamily: {

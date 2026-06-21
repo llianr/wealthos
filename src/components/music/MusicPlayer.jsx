@@ -103,7 +103,7 @@ const MusicPlayer = () => {
         <AnimatePresence>
           {expanded && (
             <motion.div
-              className="px-5 py-4 border-b border-white/5"
+              className="px-5 py-4 border-b border-glass-border"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -116,8 +116,8 @@ const MusicPlayer = () => {
                     key={i}
                     className="w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-all"
                     style={{
-                      background: trackIndex === i ? `${track.color}15` : 'rgba(255,255,255,0.03)',
-                      border: `1px solid ${trackIndex === i ? `${track.color}30` : 'rgba(255,255,255,0.05)'}`,
+                      background: trackIndex === i ? `${track.color}15` : 'var(--surface-1)',
+                      border: `1px solid ${trackIndex === i ? `${track.color}30` : 'var(--surface-2)'}`,
                     }}
                     onClick={() => {
                       setTrackIndex(i)
@@ -132,7 +132,7 @@ const MusicPlayer = () => {
                   >
                     <span className="text-xl">{track.emoji}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white text-xs font-medium truncate">{track.title}</p>
+                      <p className="text-text-primary text-xs font-medium truncate">{track.title}</p>
                       <p className="text-text-muted text-[10px]">{track.artist}</p>
                     </div>
                     {trackIndex === i && musicPlaying && (
@@ -153,7 +153,7 @@ const MusicPlayer = () => {
 
               {/* Volume control */}
               <div className="flex items-center gap-3 mt-4">
-                <button onClick={() => setMuted(!muted)} className="text-text-secondary hover:text-white">
+                <button onClick={() => setMuted(!muted)} className="text-text-secondary hover:text-text-primary">
                   {muted || musicVolume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
                 </button>
                 <input
@@ -185,7 +185,7 @@ const MusicPlayer = () => {
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-white text-xs font-medium truncate">{currentTrack.title}</p>
+              <p className="text-text-primary text-xs font-medium truncate">{currentTrack.title}</p>
               <p className="text-text-muted text-[10px]">{currentTrack.artist}</p>
             </div>
           </div>
@@ -209,7 +209,7 @@ const MusicPlayer = () => {
           {/* Controls */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <button
-              className="p-1.5 rounded-lg text-text-secondary hover:text-white transition-colors"
+              className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary transition-colors"
               onClick={nextTrack}
               title="Next track"
             >
@@ -221,20 +221,20 @@ const MusicPlayer = () => {
               style={{
                 background: musicPlaying
                   ? `linear-gradient(135deg, ${currentTrack.color}, ${currentTrack.color}99)`
-                  : 'rgba(255,255,255,0.08)',
+                  : 'var(--surface-4)',
               }}
               onClick={togglePlay}
               whileTap={{ scale: 0.9 }}
             >
               {loading
-                ? <Loader2 size={14} className="text-white animate-spin" />
+                ? <Loader2 size={14} className={`animate-spin ${musicPlaying ? 'text-white' : 'text-text-primary'}`} />
                 : musicPlaying
                   ? <Pause size={14} className="text-white" />
-                  : <Play size={14} className="text-white" />}
+                  : <Play size={14} className="text-text-primary" />}
             </motion.button>
 
             <button
-              className="p-1.5 rounded-lg text-text-secondary hover:text-white transition-colors"
+              className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary transition-colors"
               onClick={() => setExpanded(!expanded)}
             >
               {expanded ? <ChevronDown size={14} /> : <ChevronUp size={14} />}

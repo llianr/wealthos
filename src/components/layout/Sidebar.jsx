@@ -45,15 +45,15 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <motion.aside
-        className={`sidebar glass-card rounded-none border-r border-white/5 flex flex-col lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : ''}`}
+        className={`sidebar glass-card rounded-none border-r flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
         style={{
-          background: 'linear-gradient(180deg, rgba(17,19,24,0.98) 0%, rgba(10,11,15,0.98) 100%)',
-          borderRight: '1px solid rgba(255,255,255,0.05)',
+          background: 'linear-gradient(180deg, var(--bg-card) 0%, var(--bg-primary) 100%)',
+          borderRightColor: 'var(--glass-border)',
         }}
         initial={false}
       >
         {/* Logo area */}
-        <div className="p-5 border-b border-white/5">
+        <div className="p-5 border-b border-glass-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {/* Logo icon */}
@@ -71,7 +71,7 @@ const Sidebar = () => {
                 </div>
               </div>
               <div>
-                <h1 className="font-display text-base font-bold text-white leading-none">WealthOS</h1>
+                <h1 className="font-display text-base font-bold text-text-primary leading-none">WealthOS</h1>
                 <p className="text-text-muted text-[10px] tracking-widest uppercase mt-0.5">Finance</p>
               </div>
             </div>
@@ -107,15 +107,15 @@ const Sidebar = () => {
                   style={{
                     background: isActive
                       ? `${item.color}20`
-                      : 'rgba(255,255,255,0.04)',
+                      : 'var(--surface-2)',
                   }}
                 >
                   <Icon
                     size={16}
-                    style={{ color: isActive ? item.color : '#8B92A5' }}
+                    style={{ color: isActive ? item.color : 'var(--text-secondary)' }}
                   />
                 </div>
-                <span className={isActive ? 'text-white' : ''}>{item.label}</span>
+                <span className={isActive ? 'text-text-primary' : ''}>{item.label}</span>
 
                 {item.id === 'ai' && (
                   <span className="ml-auto">
@@ -130,17 +130,17 @@ const Sidebar = () => {
         </nav>
 
         {/* Bottom area - User info */}
-        <div className="p-4 border-t border-white/5 space-y-3">
+        <div className="p-4 border-t border-glass-border space-y-3">
           {/* User card */}
           <div className="glass-card p-3 rounded-xl flex items-center gap-3">
             <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold font-display flex-shrink-0"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold font-display flex-shrink-0 text-white"
               style={{ background: 'linear-gradient(135deg, #6C63FF, #4B44CC)' }}
             >
               {initials}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">{displayName}</p>
+              <p className="text-sm font-medium text-text-primary truncate">{displayName}</p>
               <p className="text-xs text-text-secondary truncate">{user?.email}</p>
             </div>
           </div>
