@@ -1,9 +1,9 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, ArrowLeftRight, Target, Wallet,
-  TrendingUp, Bot, LogOut, X, Zap, ChevronRight,
-  Menu
+  TrendingUp, Bot, LogOut, X, Zap, Edit2, Loader2
 } from 'lucide-react'
+import { useState } from 'react'
 import { useApp } from '../../contexts/AppContext'
 import { useAuth } from '../../contexts/AuthContext'
 
@@ -18,10 +18,31 @@ const navItems = [
 
 const Sidebar = () => {
   const { activePage, setActivePage, sidebarOpen, setSidebarOpen } = useApp()
-  const { user, signOut } = useAuth()
+  const { user, signOut, updateDisplayName } = useAuth()
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
   const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+
+  const [showEdit, setShowEdit] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [nameError, setNameError] = useState('')
+
+  const handleOpenEdit = () => {
+    setNewName(displayName)
+    setNameError('')
+    setShowEdit(true)
+  }
+
+  const handleSaveName = async () => {
+    if (!newName.trim()) { setNameError('Nama tidak boleh kosong'); return }
+    if (newName.trim() === displayName) { setShowEdit(false); return }
+    setSaving(true)
+    const { error } = await updateDisplayName(newName.trim())
+    setSaving(false)
+    if (error) setNameError('Gagal menyimpan, coba lagi')
+    else setShowEdit(false)
+  }
 
   const handleNav = (id) => {
     setActivePage(id)
@@ -131,8 +152,14 @@ const Sidebar = () => {
 
         {/* Bottom area - User info */}
         <div className="p-4 border-t border-glass-border space-y-3">
-          {/* User card */}
-          <div className="glass-card p-3 rounded-xl flex items-center gap-3">
+
+          {/* User card — klik untuk edit nama */}
+          <motion.button
+            className="glass-card p-3 rounded-xl flex items-center gap-3 w-full text-left group"
+            onClick={handleOpenEdit}
+            whileTap={{ scale: 0.98 }}
+            title="Klik untuk ganti nama"
+          >
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold font-display flex-shrink-0 text-white"
               style={{ background: 'linear-gradient(135deg, #6C63FF, #4B44CC)' }}
@@ -143,7 +170,99 @@ const Sidebar = () => {
               <p className="text-sm font-medium text-text-primary truncate">{displayName}</p>
               <p className="text-xs text-text-secondary truncate">{user?.email}</p>
             </div>
-          </div>
+            <Edit2
+              size={14}
+              className="text-text-muted group-hover:text-brand-violet flex-shrink-0 transition-colors duration-200"
+            />
+          </motion.button>
+
+          {/* Modal edit nama */}
+          <AnimatePresence>
+            {showEdit && (
+              <motion.div
+                className="modal-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={e => e.target === e.currentTarget && setShowEdit(false)}
+              >
+                <motion.div
+                  className="modal-content p-6"
+                  initial={{ opacity: 0, scale: 0.96, y: 16 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96, y: 16 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+                >
+                  {/* Header modal */}
+                  <div className="flex items-center justify-between mb-5">
+                    <div>
+                      <h3 className="font-display text-lg font-bold text-text-primary">✏️ Ganti Nama</h3>
+                      <p className="text-text-secondary text-xs mt-0.5">Nama akan berubah di seluruh aplikasi</p>
+                    </div>
+                    <button
+                      className="btn-glass p-2 rounded-xl"
+                      onClick={() => setShowEdit(false)}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+
+                  {/* Avatar preview */}
+                  <div className="flex items-center gap-3 p-3 rounded-xl mb-5" style={{ background: 'var(--surface-2)' }}>
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold font-display flex-shrink-0 text-white"
+                      style={{ background: 'linear-gradient(135deg, #6C63FF, #4B44CC)' }}
+                    >
+                      {newName ? newName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : initials}
+                    </div>
+                    <div>
+                      <p className="text-text-primary text-sm font-medium">{newName || displayName}</p>
+                      <p className="text-text-muted text-xs">{user?.email}</p>
+                    </div>
+                  </div>
+
+                  {/* Input nama */}
+                  <div className="mb-5">
+                    <label className="text-text-secondary text-xs font-medium mb-1.5 block uppercase tracking-wider">
+                      Nama Baru
+                    </label>
+                    <input
+                      type="text"
+                      className="input-premium py-3 px-4 text-sm"
+                      placeholder="Masukkan nama..."
+                      value={newName}
+                      onChange={e => { setNewName(e.target.value); setNameError('') }}
+                      onKeyDown={e => e.key === 'Enter' && handleSaveName()}
+                      maxLength={40}
+                      autoFocus
+                    />
+                    {nameError && (
+                      <p className="text-brand-red text-xs mt-1.5">{nameError}</p>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-3">
+                    <button
+                      className="btn-glass flex-1 py-2.5 text-sm"
+                      onClick={() => setShowEdit(false)}
+                    >
+                      Batal
+                    </button>
+                    <motion.button
+                      className="btn-primary flex-[2] py-2.5 text-sm flex items-center justify-center gap-2"
+                      onClick={handleSaveName}
+                      disabled={saving || !newName.trim()}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      {saving && <Loader2 size={15} className="animate-spin" />}
+                      {saving ? 'Menyimpan...' : 'Simpan Nama'}
+                    </motion.button>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Logout */}
           <motion.button

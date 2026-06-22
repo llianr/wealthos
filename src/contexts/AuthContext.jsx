@@ -59,6 +59,14 @@ export const AuthProvider = ({ children }) => {
     return { data, error }
   }
 
+  const updateDisplayName = async (fullName) => {
+    const { data, error } = await supabase.auth.updateUser({
+      data: { full_name: fullName.trim() }
+    })
+    if (!error && data?.user) setUser(data.user)
+    return { data, error }
+  }
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -69,6 +77,7 @@ export const AuthProvider = ({ children }) => {
       signOut,
       resetPassword,
       updatePassword,
+      updateDisplayName,
     }}>
       {children}
     </AuthContext.Provider>
